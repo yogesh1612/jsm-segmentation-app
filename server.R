@@ -16,7 +16,7 @@
 # }
 # 
 
-JSM <- function(inp1,nbrds,nattr,k0,bname=NULL,aname=NULL,i){
+JSM <- function(inp1,nbrds,nattr,k0,bname=NULL,aname=NULL,i=NULL){
   
   inp_mat = matrix(unlist(inp1), ncol=nattr, nrow=nbrds, byrow=TRUE)
   inp1 = inp_mat
@@ -24,6 +24,12 @@ JSM <- function(inp1,nbrds,nattr,k0,bname=NULL,aname=NULL,i){
   # inp1 = perception matrix with row and column headers
   # brands in rows and attributes in columns
   # prefs = preferences matrix
+  
+  if(!is.null(i)){
+   plot_title =  paste0("Joint Space map for Segment - ",i)
+  }else{
+    plot_title = "Join Space map"
+  }
   
   par(pty="m")
   
@@ -33,7 +39,7 @@ JSM <- function(inp1,nbrds,nattr,k0,bname=NULL,aname=NULL,i){
        
        type ="n",xlim=c(-1.5,1.5), ylim=c(-1.5,1.5), # plot parms
        
-       main = paste0("Joint Space map for Segment - ",i)) # plot title
+       main = plot_title )#paste0("Joint Space map for Segment - ",i)) # plot title
   
   abline(h=0); abline(v=0) # build horiz & vert axes
   
@@ -107,11 +113,18 @@ shinyServer(function(input, output) {
 
 #-------------Summary Table--------------------------#
     
-output$text <- renderText({
+output$dim <- renderText({
               if (is.null(input$file)) {
                 # User has not uploaded a file yet
               return(data.frame())}else{
-                paste0('Dataset Contains ',nrow(Dataset()),' rows',' & ',ncol(Dataset()), '  columns. Below is the summary statistics of all variables')
+                paste0('*** Uploaded dataset contains ',
+                       "<font color=\"\"><b>",
+                       nrow(Dataset()),
+                       ' responses on ',
+                       ncol(Dataset()), 
+                       '  variables.',
+                       "</b></font>",
+                       "Please make sure that product of no. of brand & attribute should be equal to total columns in dataset***")
               }
   
   
@@ -144,15 +157,26 @@ output$summ <- DT::renderDataTable({
     #   )
     # })
 #---------------------------------------------------------#
-    Dataset1 <- reactive({
-        if (is.null(input$file1)) {
-            # User has not uploaded a file yet
-            return(data.frame())
-        }
-        Dataset1 <- read.csv(input$file1$datapath ,header=TRUE)
-        row.names(Dataset1) = Dataset1[,1]; Dataset1= Dataset1[,2:ncol(Dataset1)]
-        return(Dataset1)
-    })
+    # Download data files
+    output$downloadData <- downloadHandler(
+      filename = function() { "jsm survey response.csv" },
+      content = function(file) {
+        write.csv(read.csv("Dataset/jsm data for segmentation.csv"), file, row.names=F)
+      }
+    )
+#------------------------------------------------------------#
+  output$plotjsm <- renderPlot({ 
+    
+    if (is.null(input$file)) {
+      # User has not uploaded a file yet
+      return(data.frame())
+    }
+    else {
+      mean_data <- colMeans(Dataset())
+      JSM(mean_data,k0 =input$k0 ,nbrds =input$nbrds ,nattr =input$nattr,aname(),bname(),i = NULL )
+      
+    }
+  }) 
     
 #-----------------------------------------------------------#    
     fit <- reactive({
