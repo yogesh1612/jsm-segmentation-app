@@ -243,9 +243,9 @@ output$plotpca = renderPlot({
                 # fit = kmeans(Dataset(),input$Clust)
                 # Segment.Membership = as.character(fit$cluster)
                 # clustmeans = aggregate(Dataset(),by = list(Segment.Membership), FUN = mean)
-                Summary = list(Segment.Membership = Segment.Membership
+                Summary = list(#Segment.Membership = Segment.Membership
                                #,SegMeans =clustmeans,
-                               ,Count = table(Segment.Membership) )
+                               Count = table(Segment.Membership) )
                 Summary
             }
         })
