@@ -83,10 +83,10 @@ shinyUI(fluidPage(
                                    
                                  
                                  p(strong('Sample Attribute Name:')),
-                                 p('Worklife balance, Remuneration,Risk,Global Opportunities,Challanging Roles & Responsibility, Total'),
+                                 p('Worklife balance, Remuneration, Risk, Global Opportunities, Challanging Roles & Responsibility, Total'),
                                    
                                  p(strong('Sample Brand Name:')),
-                                 p('Consulting Sector,Technology and IT sector,FMCG sector,Healthcare and Pharma,Banking and Finance,Startups or early stage ventures'),
+                                 p('Consulting, Technology and IT, FMCG, Healthcare and Pharma, Banking and Finance, Startups or early stage ventures'),
                                    
                                  h4(p("Download Sample data")), 
                                  downloadButton('downloadData', 'Download sample survey responses')),
